@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'JS/script.js' %}">
+    <title>Login or Register</title>
+</head>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2>Welcome {{user.first_name}}</h2>
+
+        </div>
+
+        <div class="col-sm-4">
+                <a href="/logout"> <button class="btn btn-primary">Log out</button></a>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <h3>Add a book</h3>
+            <form action="/new_book" method ="POST">
+                {% csrf_token %}
+
+                <p>Book Title: <input type="text" name="title" class="form-control"></p>
+                <p>Author First Name: <input type="text" name="author_first" class="form-control"></p>
+                <p>Author Last Name: <input type="text" name="author_last" class="form-control"></p>
+                <p>Description: <textarea name="desc" cols="10" rows="5" class="form-control"></textarea></p>
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+            </form>
+
+        </div>
+        <div class="col-sm-2">
+
+        </div>
+
+        <div class="col-sm-6">
+            <h3>All Books</h3>
+                {% for book in book%}
+                    {% if book in user.liked_books.all %}
+
+                    <a href="book/{{book.id}}">{{book.title}}</a>
+                    <p>By: {{book.author_first_name}} {{book.author_last_name}}</p>
+                    <p>(added by: {{book.user_uploaded.first_name}} {{book.user_uploaded.last_name}})</p>
+                    <p>This book is one of your favorites</p>
+                    
+                    {% else %}
+                        <a href="book/{{book.id}}">{{book.title}}</a>
+                        <p>By: {{book.author_first_name}} {{book.author_last_name}}</p>
+                        <p>(added by: {{book.user_uploaded.first_name}} {{book.user_uploaded.last_name}})</p>
+                        <form action="/favorite" method = 'POST'>
+                            {% csrf_token %}
+                            <input type="hidden" name = "book" value = "{{book.id}}">
+                            <button type="submit">Add Favorite</button>
+                        </form>
+                    {% endif %}
+                {% endfor %}
+
+             
+
+        </div>
+
+    </div>
+</div>

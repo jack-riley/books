@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'JS/script.js' %}">
+    <title>Login or Register</title>
+</head>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2>Welcome {{user.first_name}}</h2>
+
+        </div>
+
+        <div class="col-sm-4">
+                <a href="/logout"> <button class="btn btn-primary">Log out</button></a>
+        </div>
+
+    </div>
+
+    <div class="row">
+        {% if book.user_uploaded == user %}
+        <div class="col-sm-6">
+            <form action="/edit_book/{{book.id}}" method ="POST">
+                {% csrf_token %}
+                <h3>Book Title: <input type="text" name="title" class="form-control" value ="{{book.title}}"></h3>
+                <p>Author First Name: <input type="text" name="author_first" class="form-control" value ="{{book.author_first_name}}"></p>
+                <p>Author Last Name: <input type="text" name="author_last" class="form-control" value ="{{book.author_last_name}}"></p>
+                <p>Description: <textarea name="desc" class="form-control" cols="20" rows="3">{{book.desc}}</textarea></p>
+                <button type="submit" class="btn btn-primary">Subimit</button>
+
+            </form>
+            <form action="/delete">
+                <input type="hidden" name="book" value = "{{book.id}}">
+                <button type="submit" class = "btn btn-danger">Delete</button>
+            </form>
+            <a href="/books">Back to Book List</a>
+
+
+        </div>
+        {% else %}
+        <div class="col-sm-6">
+                <h3>{{book.title}}</h3>
+                <p>By: {{book.author_first_name}} {{book.author_last_name}}</p>
+                <p>Added by: {{book.user_upload.first_name}} {{book.user_upload.last_name}}</p>
+                <p>Last Updated: {{book.updated_at}}</p>
+                <p>{{book.desc}}</p>
+                <a href="/books">Back to Book List</a>
+
+        </div>
+        {% endif %}
+
+        <a href="/books">Back to Book List</a>
+
+        <div class ='col-sm-2'>
+
+        </div>
+
+        <div class="col-sm-4">
+            <h3>Favorited By</h3>
+            <ul>
+                {% for user in book.user_likes.all%}
+                    <li>{{user.first_name}} {{user.last_name}}</li>
+                {% endfor %}
+            </ul>
+            {% if book in user.liked_books.all %}
+                <form action="/unfavorite" method = 'POST'>
+                    {% csrf_token %}
+                    <input type="hidden" name="book" value = {{book.id}}>
+                    <button type="submit">Remove Favorite</button>
+                </form>
+            {% else %}
+                <form action="/favorite_2" method = 'POST'>
+                    {% csrf_token %}
+                    <input type="hidden" name="book" value = {{book.id}}>
+                    <button type="submit">Favorite</button>
+                </form>
+            {% endif %}
+
+
+
+        </div>
+
+    </div>
+</div>
